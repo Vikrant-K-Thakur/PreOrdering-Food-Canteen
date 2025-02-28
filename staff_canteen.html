@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Canteen</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            background-image: url("Assets/Staff canteen/Staff_canteen_bg.png");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header {
+            width: 100%;
+            background: #FF6F61;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .search-container {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-container input {
+            width: 50%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #FF6F61;
+            border-radius: 5px;
+            outline: none;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            gap: 20px;
+        }
+
+        .menu-section {
+            flex: 3;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .cart-section {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            max-width: 300px;
+            position: sticky;
+            top: 20px;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .menu-item {
+            width: 200px;
+            text-align: center;
+            background: white;
+            padding: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            color: #333;
+        }
+
+        .menu-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .menu-item.unavailable {
+            background: #ffcccc;
+            color: red;
+        }
+
+        .menu-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .cart-list {
+            list-style: none;
+            padding: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cart-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .cart-list li button {
+            background: none;
+            border: none;
+            color: red;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button {
+            background: #FF6F61;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #D84315;
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                /* Stack menu and cart vertically */
+                align-items: center;
+            }
+
+            .cart-section {
+                width: 90%;
+                max-width: 400px;
+                position: static;
+                /* Remove sticky in mobile view */
+                margin-bottom: 15px;
+            }
+
+            .menu-section {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .menu-item {
+                width: 90%;
+                display: flex;
+                align-items: center;
+                padding: 10px;
+                gap: 15px;
+            }
+
+            .menu-item img {
+                width: 80px;
+                height: 80px;
+                border-radius: 10px;
+            }
+
+            .menu-item h3 {
+                flex-grow: 1;
+                /* Allows text to expand within the available space */
+                text-align: left;
+                font-size: 16px;
+            }
+
+            .menu-item button {
+                font-size: 14px;
+                padding: 5px 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        Staff Canteen
+        <div class="search-container">
+            <input type="text" id="search-bar" placeholder="Search for food..." onkeyup="searchMenu()">
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="cart-section">
+            <h3>Your Cart</h3>
+            <ul id="cart-list" class="cart-list"></ul>
+            <button id="checkout-button">Checkout</button>
+            <p>Total: Rs<span id="total-price">0</span></p>
+        </div>
+        <div class="menu-section" id="menu-items"></div>
+    </div>
+
+    <script>
+        const products = [
+            { id: 1, name: "Aloo Paratha", price: 25, image: "Assets/Main canteen/Paratha/Aloo_Paratha.jpg" },
+            { id: 2, name: "Chapati Bhaji", price: 15, image: "Assets/Main canteen/Paratha/Chapati bhaji.jpg" },
+            { id: 3, name: "Chole Bhature", price: 40, image: "Assets/Main canteen/Paratha/chole-bhature.jpg" },
+            { id: 4, name: "Paratha Bhaji", price: 60, image: "Assets/Main canteen/Paratha/paratha bhaji.jpg" },
+            { id: 5, name: "Puri Bhaji", price: 40, image: "Assets/Main canteen/Paratha/Puri bhaji.jpg" },
+            { id: 6, name: "Cut Dosa", price: 20, image: "Assets/Main canteen/Dosa/cut Dosa.jpg" },
+            { id: 7, name: "Onion Uttappa", price: 35, image: "Assets/Main canteen/Dosa/onion uttappa.jpg" },
+            { id: 8, name: "Dhokala", price: 40, image: "Assets/Main canteen/Break fast/Dhokla.jpg" },
+            { id: 9, name: "Idli", price: 22, image: "Assets/Main canteen/Break fast/idli.jpg" },
+            { id: 10, name: "Misal Pav", price: 25, image: "Assets/Main canteen/Break fast/misal-pav.avif" },
+            { id: 11, name: "Pav Bhaji", price: 17, image: "Assets/Main canteen/Break fast/Pav-Bhaji.jpg" },
+            { id: 12, name: "Poha", price: 17, image: "Assets/Main canteen/Break fast/POha.jpg" },
+            { id: 13, name: "Samosa", price: 35, image: "Assets/Main canteen/Break fast/Samosa.jpg" },
+            { id: 14, name: "Vada Pav", price: 10, image: "Assets/Main canteen/Break fast/Vada pav.jpg" },
+            { id: 15, name: "Tea", price: 40, image: "Assets/Main canteen/Hot B/Tea.jpg" },
+            { id: 16, name: "Cold Coffee", price: 18, image: "Assets/Main canteen/Cold B/Cold-Coffee.jpg" }
+        ];
+
+        let cart = {};
+
+        function renderMenu() {
+            const menuContainer = document.getElementById("menu-items");
+            menuContainer.innerHTML = "";
+            const savedAvailability = JSON.parse(localStorage.getItem("staffCanteenAvailability")) || products;
+            products.forEach(product => {
+                const savedProduct = savedAvailability.find(p => p.id === product.id);
+                const isAvailable = savedProduct ? savedProduct.available : true;
+                const menuItem = document.createElement("div");
+                menuItem.className = `menu-item ${isAvailable ? "" : "unavailable"}`;
+                menuItem.setAttribute("data-name", product.name.toLowerCase());
+                menuItem.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}">
+                    <h3>${product.name} - Rs${product.price}</h3>
+                    <button onclick="addToCart('${product.name}', ${product.price})" ${isAvailable ? "" : "disabled"}>Add to Cart</button>
+                `;
+                menuContainer.appendChild(menuItem);
+            });
+        }
+
+        function searchMenu() {
+            const searchTerm = document.getElementById("search-bar").value.toLowerCase();
+            document.querySelectorAll(".menu-item").forEach(item => {
+                item.style.display = item.getAttribute("data-name").includes(searchTerm) ? "block" : "none";
+            });
+        }
+
+        function addToCart(name, price) {
+            if (cart[name]) {
+                cart[name].quantity += 1;
+            } else {
+                cart[name] = { price: price, quantity: 1 };
+            }
+            updateCart();
+        }
+
+        function removeFromCart(name) {
+            if (cart[name]) {
+                if (cart[name].quantity > 1) {
+                    cart[name].quantity -= 1;
+                } else {
+                    delete cart[name];
+                }
+                updateCart();
+            }
+        }
+
+        function updateCart() {
+            const cartList = document.getElementById("cart-list");
+            const totalPriceElement = document.getElementById("total-price");
+            cartList.innerHTML = "";
+            let totalPrice = 0;
+            for (const [name, details] of Object.entries(cart)) {
+                const itemTotal = details.price * details.quantity;
+                totalPrice += itemTotal;
+                cartList.innerHTML += `
+                    <li>
+                        ${name} x ${details.quantity} = Rs${itemTotal}
+                        <button onclick="removeFromCart('${name}')">❌</button>
+                    </li>
+                `;
+            }
+            totalPriceElement.textContent = totalPrice;
+        }
+
+        document.getElementById("checkout-button").addEventListener("click", () => {
+            const order = encodeURIComponent(JSON.stringify(cart));
+            const total = encodeURIComponent(document.getElementById("total-price").textContent);
+            window.location.href = `payment_staff_page.html?order=${order}&total=${total}`;
+        });
+
+        renderMenu();
+    </script>
+</body>
+
+</html>

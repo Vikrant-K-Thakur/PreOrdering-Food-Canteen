@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            z-index: 1;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .textbox {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .textbox input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none;
+            transition: border 0.3s ease, transform 0.3s ease;
+        }
+
+        .textbox input:focus {
+            border-color: #FF6F61;
+            transform: translateY(-5px);
+        }
+
+        .pass-icon {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            width: 22px;
+        }
+
+        .btn {
+            background-color: #FF6F61;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #D9A7C7;
+            transform: scale(1.1);
+        }
+
+        .role-selection {
+            margin-bottom: 20px;
+        }
+
+        #errorMessage {
+            color: red;
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <video autoplay loop muted class="video-bg">
+        <source src="Assets/Other/Login Video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="login-container">
+        <div class="login-box">
+            <h2>Login</h2>
+            <form id="loginForm" onsubmit="return validateLogin()">
+                <div class="role-selection">
+                    <label for="role">Login as:</label>
+                    <select id="role" name="role">
+                        <option value="student">Student</option>
+                        <option value="canteen">Canteen Head</option>
+                    </select>
+                </div>
+                <div class="textbox">
+                    <input type="text" id="username" placeholder="Username" name="username" required>
+                </div>
+                <div class="textbox">
+                    <input type="password" id="password" placeholder="Password" name="password" required>
+                    <img src="Assets/Other/pass-hide.png" onclick="togglePassword()" class="pass-icon" id="pass-icon" alt="Toggle Password">
+                </div>
+                <button type="submit" class="btn">Login</button>
+                <p id="errorMessage">Invalid Username or Password</p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function validateLogin() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const role = document.getElementById("role").value;
+            const errorMessage = document.getElementById("errorMessage");
+
+            function extractName(email) {
+                return email.split('@')[0].replace(/\d+/g, '').replace(/\./g, ' ');
+            }
+
+            if (role === "student" && username.endsWith("@vit.edu")) {
+                localStorage.setItem("userName", extractName(username));
+                window.location.href = "main_page.html";
+                return false;
+            } else if (role === "canteen") {
+                const canteenCredentials = {
+                    "canteen1": "Canteen1.html",
+                    "canteen2": "Canteen2.html",
+                    "canteen3": "Canteen3.html",
+                    "canteen4": "Canteen4.html",
+                    "canteen5": "Canteen5.html",
+                    "canteen6": "Canteen6.html"
+                };
+                if (canteenCredentials[password] && username === password) {
+                    localStorage.setItem("userName", extractName(username));
+                    window.location.href = canteenCredentials[password];
+                    return false;
+                }
+            }
+            errorMessage.style.display = "block";
+            return false;
+        }
+
+        function togglePassword() {
+            const passwordInput = document.getElementById("password");
+            const passIcon = document.getElementById("pass-icon");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                passIcon.src = "Assets/Other/pass-show.png";
+            } else {
+                passwordInput.type = "password";
+                passIcon.src = "Assets/Other/pass-hide.png";
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koisk Caffe Payment</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f4f4f4, #d3e0ea);
+            background-image: url("Assets/Other/Payment_Background.jpg");
+            color: #333;
+            padding: 20px;
+            text-align: center;
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            color: #007BFF;
+            animation: slideDown 0.8s ease-in-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .order-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+
+        .order-summary {
+            padding: 20px;
+            background: white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            width: 50%;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .order-summary:hover {
+            transform: scale(1.03);
+        }
+
+        .order-details {
+            flex: 1;
+        }
+
+        .qr-section img {
+            width: 150px;
+            height: 150px;
+            border-radius: 8px;
+            margin-left: 20px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .qr-section img:hover {
+            transform: rotate(5deg) scale(1.05);
+        }
+
+        .receipt {
+            width: 50%;
+            max-width: 400px;
+            margin: auto;
+            padding: 5px;
+            background: #e6ffe6;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+
+        .receipt.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .receipt-header {
+            font-size: 2em;
+            font-weight: bold;
+            color: #007BFF;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #007BFF, #0056b3);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+            font-size: 1.1em;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #0056b3, #003d7a);
+            transform: scale(1.1);
+        }
+        
+        @media (max-width: 768px) {
+            .order-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .order-summary {
+                width: 90%;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .qr-section img {
+                margin-left: 0;
+                margin-top: 10px;
+                width: 120px;
+                height: 120px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            button {
+                width: 100%;
+                max-width: 300px;
+                font-size: 1em;
+                padding: 10px;
+            }
+
+            .receipt {
+                width: 80%;
+                max-width: 350px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Koisk Caffe Payment Section</h1>
+
+    <div class="order-container">
+        <div class="order-summary" id="order-summary">
+            <div class="order-details">
+                <h3>Order Details</h3>
+                <ul id="order-items"></ul>
+                <p><strong>Total Price: Rs<span id="total-price"></span></strong></p>
+            </div>
+            <div class="qr-section">
+                <img src="Assets/Main canteen/QR of main website.jpg" alt="QR Code">
+            </div>
+        </div>
+    </div>
+
+    <button id="generate-receipt">Generate Receipt</button>
+
+    <div class="receipt" id="receipt">
+        <h2 class="receipt-header">Koisk Caffe</h2>
+        <h3>Payment Receipt</h3>
+        <p><strong>Name:</strong> <span id="user-name"></span></p>
+        <p><strong>Date:</strong> <span id="current-date"></span></p>
+        <p><strong>Time:</strong> <span id="current-time"></span></p>
+        <h4>Order Summary:</h4>
+        <ul id="receipt-items"></ul>
+        <p><strong>Total Paid: Rs<span id="receipt-total"></span></strong></p>
+    </div>
+
+    <script>
+        // Get stored username from localStorage
+        const storedName = localStorage.getItem("userName") || "Guest";
+        document.getElementById("user-name").textContent = storedName;
+
+        // Get cart data from localStorage
+        const cart = JSON.parse(localStorage.getItem("koiskCanteenCart")) || {};
+        const totalPrice = localStorage.getItem("koiskCanteenTotalPrice") || "0";
+
+        // Display order details
+        const orderItems = document.getElementById("order-items");
+        for (const [item, details] of Object.entries(cart)) {
+            const li = document.createElement("li");
+            li.textContent = `${details.quantity} x ${item} - Rs${details.price * details.quantity}`;
+            orderItems.appendChild(li);
+        }
+
+        document.getElementById("total-price").textContent = totalPrice;
+
+        // Handle receipt generation
+        document.getElementById("generate-receipt").addEventListener("click", displayReceipt);
+
+        function displayReceipt() {
+            const receipt = document.getElementById("receipt");
+            receipt.classList.add("show");
+
+            const currentDate = new Date();
+            document.getElementById("current-date").textContent = currentDate.toLocaleDateString();
+            document.getElementById("current-time").textContent = currentDate.toLocaleTimeString();
+
+            const receiptItems = document.getElementById("receipt-items");
+            receiptItems.innerHTML = "";
+            for (const [item, details] of Object.entries(cart)) {
+                const li = document.createElement("li");
+                li.textContent = `${details.quantity} x ${item} - Rs${details.price * details.quantity}`;
+                receiptItems.appendChild(li);
+            }
+
+            document.getElementById("receipt-total").textContent = totalPrice;
+        }
+    </script>
+</body>
+
+</html>
