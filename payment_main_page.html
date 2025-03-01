@@ -242,6 +242,19 @@
             }
 
             document.getElementById("receipt-total").textContent = totalPrice;
+
+            // Save receipt data to localStorage
+            const receiptData = {
+                name: storedName,
+                date: currentDate.toLocaleDateString(),
+                time: currentDate.toLocaleTimeString(),
+                items: Object.entries(order).map(([name, details]) => `${details.quantity} x ${name} - Rs${details.price * details.quantity}`),
+                total: totalPrice
+            };
+
+            let receipts = JSON.parse(localStorage.getItem("receipts")) || [];
+            receipts.push(receiptData);
+            localStorage.setItem("receipts", JSON.stringify(receipts));
         }
     </script>
 </body>

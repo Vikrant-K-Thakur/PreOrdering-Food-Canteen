@@ -55,6 +55,21 @@
             background: #D84315;
             transform: scale(1.1);
         }
+        .receipts-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .receipt-item {
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .receipt-item:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body>
@@ -63,6 +78,11 @@
         <h3>Set Item Availability</h3>
         <div id="menu-items"></div>
         <button onclick="saveAvailability()">Save Changes</button>
+    </div>
+
+    <div class="receipts-section">
+        <h3>Order Receipts</h3>
+        <div id="receipts-list"></div>
     </div>
 
     <script>
@@ -120,7 +140,29 @@
             alert("Availability updated successfully!");
         }
 
+        function loadReceipts() {
+            const receipts = JSON.parse(localStorage.getItem("receipts")) || [];
+            const receiptsList = document.getElementById("receipts-list");
+            receiptsList.innerHTML = "";
+            receipts.forEach(receipt => {
+                const receiptItem = document.createElement("div");
+                receiptItem.className = "receipt-item";
+                receiptItem.innerHTML = `
+                    <p><strong>Name:</strong> ${receipt.name}</p>
+                    <p><strong>Date:</strong> ${receipt.date}</p>
+                    <p><strong>Time:</strong> ${receipt.time}</p>
+                    <p><strong>Items:</strong></p>
+                    <ul>
+                        ${receipt.items.map(item => `<li>${item}</li>`).join("")}
+                    </ul>
+                    <p><strong>Total Paid:</strong> Rs${receipt.total}</p>
+                `;
+                receiptsList.appendChild(receiptItem);
+            });
+        }
+
         loadAvailability();
+        loadReceipts();
     </script>
 </body>
 </html>
