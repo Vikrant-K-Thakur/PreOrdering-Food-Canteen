@@ -218,7 +218,7 @@
         const orderItems = document.getElementById("order-items");
         for (const [name, details] of Object.entries(order)) {
             const li = document.createElement("li");
-            li.textContent = `${details.quantity} x ${name} - $${details.price * details.quantity}`;
+            li.textContent = `${details.quantity} x ${name} - Rs${details.price * details.quantity}`;
             orderItems.appendChild(li);
         }
 
@@ -237,7 +237,7 @@
             receiptItems.innerHTML = "";
             for (const [name, details] of Object.entries(order)) {
                 const li = document.createElement("li");
-                li.textContent = `${details.quantity} x ${name} - $${details.price * details.quantity}`;
+                li.textContent = `${details.quantity} x ${name} - Rs${details.price * details.quantity}`;
                 receiptItems.appendChild(li);
             }
 
