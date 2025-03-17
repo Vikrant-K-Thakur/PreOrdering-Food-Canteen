@@ -62,18 +62,17 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .receipt-item {
-            border-bottom: 1px solid #ddd;
+        .receipt {
+            border: 1px solid #ddd;
             padding: 10px;
-            text-align: left;
-        }
-        .receipt-item:last-child {
-            border-bottom: none;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background: #f9f9f9;
         }
     </style>
 </head>
 <body>
-    <div class="header">Fruit Canteen</div>
+    <div class="header">Main Canteen</div>
     <div class="container">
         <h3>Set Item Availability</h3>
         <div id="menu-items"></div>
@@ -87,26 +86,26 @@
 
     <script>
         let products = [
-            { id: 1, name: "Apple", available: true },
-            { id: 2, name: "Black Tea", available: true },
-            { id: 3, name: "Dhokala", available: true },
-            { id: 4, name: "Fruit Rabri", available: true },
-            { id: 5, name: "Fruit Salad", available: true },
-            { id: 6, name: "Hot Coffee", available: true },
-            { id: 7, name: "Idli", available: true },
-            { id: 8, name: "Musk Melon Shake", available: true },
-            { id: 9, name: "Patice", available: true },
-            { id: 10, name: "Pohe", available: true },
-            { id: 11, name: "Sabudana Vada", available: true },
-            { id: 12, name: "Samosa", available: true },
-            { id: 13, name: "Shev Pav", available: true },
-            { id: 14, name: "Tea", available: true },
-            { id: 15, name: "Udid Vada", available: true },
-            { id: 16, name: "Vada Pav", available: true }
+            { id: 1, name: "Aloo Paratha", available: true },
+            { id: 2, name: "Chapati Bhaji", available: true },
+            { id: 3, name: "Chole Bhature", available: true },
+            { id: 4, name: "Paratha Bhaji", available: true },
+            { id: 5, name: "Puri Bhaji", available: true },
+            { id: 6, name: "Cut Dosa", available: true },
+            { id: 7, name: "Onion Uttappa", available: true },
+            { id: 8, name: "Dhokala", available: true },
+            { id: 9, name: "Idli", available: true },
+            { id: 10, name: "Misal Pav", available: true },
+            { id: 11, name: "Pav Bhaji", available: true },
+            { id: 12, name: "Poha", available: true },
+            { id: 13, name: "Samosa", available: true },
+            { id: 14, name: "Vada Pav", available: true },
+            { id: 15, name: "Tea", available: true },
+            { id: 16, name: "Cold Coffee", available: true }
         ];
 
         function loadAvailability() {
-            const savedAvailability = JSON.parse(localStorage.getItem("fruitCanteenAvailability"));
+            const savedAvailability = JSON.parse(localStorage.getItem("mainCanteenProductAvailability"));
             if (savedAvailability) {
                 products.forEach(product => {
                     const savedProduct = savedAvailability.find(p => p.id === product.id);
@@ -136,7 +135,7 @@
                 const checkbox = document.getElementById(`product-${product.id}`);
                 product.available = checkbox.checked;
             });
-            localStorage.setItem("fruitCanteenAvailability", JSON.stringify(products));
+            localStorage.setItem("mainCanteenProductAvailability", JSON.stringify(products));
             alert("Availability updated successfully!");
         }
 
@@ -145,19 +144,19 @@
             const receiptsList = document.getElementById("receipts-list");
             receiptsList.innerHTML = "";
             receipts.forEach(receipt => {
-                const receiptItem = document.createElement("div");
-                receiptItem.className = "receipt-item";
-                receiptItem.innerHTML = `
+                const receiptDiv = document.createElement("div");
+                receiptDiv.className = "receipt";
+                receiptDiv.innerHTML = `
                     <p><strong>Name:</strong> ${receipt.name}</p>
                     <p><strong>Date:</strong> ${receipt.date}</p>
                     <p><strong>Time:</strong> ${receipt.time}</p>
-                    <p><strong>Items:</strong></p>
+                    <h4>Order Summary:</h4>
                     <ul>
                         ${receipt.items.map(item => `<li>${item}</li>`).join("")}
                     </ul>
-                    <p><strong>Total Paid:</strong> Rs${receipt.total}</p>
+                    <p><strong>Total Paid: Rs${receipt.total}</strong></p>
                 `;
-                receiptsList.appendChild(receiptItem);
+                receiptsList.appendChild(receiptDiv);
             });
         }
 

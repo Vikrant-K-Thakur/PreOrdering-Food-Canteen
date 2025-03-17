@@ -228,8 +228,11 @@
             receipt.classList.add("show");
 
             const currentDate = new Date();
-            document.getElementById("current-date").textContent = currentDate.toLocaleDateString();
-            document.getElementById("current-time").textContent = currentDate.toLocaleTimeString();
+            const date = currentDate.toLocaleDateString();
+            const time = currentDate.toLocaleTimeString();
+
+            document.getElementById("current-date").textContent = date;
+            document.getElementById("current-time").textContent = time;
 
             const receiptItems = document.getElementById("receipt-items");
             receiptItems.innerHTML = "";
@@ -240,6 +243,23 @@
             }
 
             document.getElementById("receipt-total").textContent = totalPrice;
+
+            // Save receipt data to localStorage
+            const receiptData = {
+                name: storedName,
+                date: date,
+                time: time,
+                items: Object.entries(cart).map(([item, details]) => ({
+                    item: item,
+                    quantity: details.quantity,
+                    price: details.price
+                })),
+                total: totalPrice
+            };
+
+            const receipts = JSON.parse(localStorage.getItem("koiskCanteenReceipts")) || [];
+            receipts.push(receiptData);
+            localStorage.setItem("koiskCanteenReceipts", JSON.stringify(receipts));
         }
     </script>
 </body>
