@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Canteen - Head</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            text-align: center;
+            padding: 20px;
+        }
+        .header {
+            background: #FF6F61;
+            color: white;
+            padding: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .menu-item label {
+            flex: 1;
+            text-align: left;
+        }
+        button {
+            background: #FF6F61;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        button:hover {
+            background: #D84315;
+            transform: scale(1.1);
+        }
+        .receipts-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .receipt {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">Main Canteen</div>
+    <div class="container">
+        <h3>Set Item Availability</h3>
+        <div id="menu-items"></div>
+        <button onclick="saveAvailability()">Save Changes</button>
+    </div>
+
+    <div class="receipts-section">
+        <h3>Order Receipts</h3>
+        <div id="receipts-list"></div>
+    </div>
+
+    <script>
+        let products = [
+            { id: 1, name: "Aloo Paratha", available: true },
+            { id: 2, name: "Chapati Bhaji", available: true },
+            { id: 3, name: "Chole Bhature", available: true },
+            { id: 4, name: "Paratha Bhaji", available: true },
+            { id: 5, name: "Puri Bhaji", available: true },
+            { id: 6, name: "Cut Dosa", available: true },
+            { id: 7, name: "Onion Uttappa", available: true },
+            { id: 8, name: "Dhokala", available: true },
+            { id: 9, name: "Idli", available: true },
+            { id: 10, name: "Misal Pav", available: true },
+            { id: 11, name: "Pav Bhaji", available: true },
+            { id: 12, name: "Poha", available: true },
+            { id: 13, name: "Samosa", available: true },
+            { id: 14, name: "Vada Pav", available: true },
+            { id: 15, name: "Tea", available: true },
+            { id: 16, name: "Cold Coffee", available: true }
+        ];
+
+        function loadAvailability() {
+            const savedAvailability = JSON.parse(localStorage.getItem("mainCanteenProductAvailability"));
+            if (savedAvailability) {
+                products.forEach(product => {
+                    const savedProduct = savedAvailability.find(p => p.id === product.id);
+                    if (savedProduct) {
+                        product.available = savedProduct.available;
+                    }
+                });
+            }
+            renderMenu();
+        }
+
+        function renderMenu() {
+            const menuContainer = document.getElementById("menu-items");
+            menuContainer.innerHTML = "";
+            products.forEach(product => {
+                menuContainer.innerHTML += `
+                    <div class="menu-item">
+                        <label>${product.name}</label>
+                        <input type="checkbox" id="product-${product.id}" ${product.available ? "checked" : ""}>
+                    </div>
+                `;
+            });
+        }
+
+        function saveAvailability() {
+            products.forEach(product => {
+                const checkbox = document.getElementById(`product-${product.id}`);
+                product.available = checkbox.checked;
+            });
+            localStorage.setItem("mainCanteenProductAvailability", JSON.stringify(products));
+            alert("Availability updated successfully!");
+        }
+
+        function loadReceipts() {
+            const receipts = JSON.parse(localStorage.getItem("receipts")) || [];
+            const receiptsList = document.getElementById("receipts-list");
+            receiptsList.innerHTML = "";
+            receipts.forEach(receipt => {
+                const receiptDiv = document.createElement("div");
+                receiptDiv.className = "receipt";
+                receiptDiv.innerHTML = `
+                    <p><strong>Name:</strong> ${receipt.name}</p>
+                    <p><strong>Date:</strong> ${receipt.date}</p>
+                    <p><strong>Time:</strong> ${receipt.time}</p>
+                    <h4>Order Summary:</h4>
+                    <ul>
+                        ${receipt.items.map(item => `<li>${item}</li>`).join("")}
+                    </ul>
+                    <p><strong>Total Paid: Rs${receipt.total}</strong></p>
+                `;
+                receiptsList.appendChild(receiptDiv);
+            });
+        }
+
+        loadAvailability();
+        loadReceipts();
+    </script>
+</body>
+</html>
