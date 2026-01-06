@@ -109,7 +109,7 @@ UniHub System
    - Check that all image paths are correctly referenced
 
 3. **Launch the Application**
-   - Open `login_page.html` in your web browser
+   - Open `index.html` in your web browser
    - Or set up a local server and navigate to the project directory
 
 4. **For Development Server (Optional)**
@@ -129,7 +129,7 @@ UniHub System
 ### For Students
 
 1. **Login Process**
-   - Open the application via `login_page.html`
+   - Open the application via `index.html`
    - Select "Student" role
    - Enter VIT email ID (@vit.edu format)
    - Use the same email as password
@@ -177,7 +177,7 @@ UniHub System
 
 ```
 00_ASEP1_WEBSITE/
-├── 📄 login_page.html          # Authentication entry point
+├── 📄 index.html               # Authentication entry point
 ├── 📄 main_page.html           # Canteen selection dashboard
 ├── 📄 main_canteen.html        # Main canteen menu
 ├── 📄 staff_canteen.html       # Staff canteen menu
